@@ -1,35 +1,41 @@
 #!/bin/bash
+if [ "$(id -u)" != "0" ]; then
+   echo "This script must be run as root" 1>&2
+   exit 1
+fi
+echo "Type hostname (example: test.ru), and press [ENTER]:"
+read host 
 SERHOME="/home/kudin/webserver"
 echo $SERHOME;
 cd /etc/apache2/sites-available
-cat <<EOF >> "$1.conf"
+cat <<EOF >> "$host.conf"
 <VirtualHost *:80>
-	ServerName $1
-	ServerAlias www.$1
-	DocumentRoot $SERHOME/$1
+	ServerName $host
+	ServerAlias www.$host
+	DocumentRoot $SERHOME/$host
 	ServerAdmin webmaster@localhost 
 <Directory /var/www/>
         Options Indexes FollowSymLinks
         AllowOverride None
         Require all granted
 </Directory>
-<Directory $SERHOME/$1>
+<Directory $SERHOME/$host>
         Options Indexes FollowSymLinks
         AllowOverride None
         Require all granted
 </Directory>
 </VirtualHost>
 EOF
-mkdir "$SERHOME/$1"
+mkdir "$SERHOME/$host"
 cd /etc/apache2/sites-enabled
-ln -s "/etc/apache2/sites-available/$1.conf" "$1.conf"
+ln -s "/etc/apache2/sites-available/$host.conf" "$host.conf"
 echo "Editing /etc/hosts"
 cat <<EOF >> "/etc/hosts"
-127.0.0.1       $1
+127.0.0.1       $host
 EOF
 echo "Set permissions"
 chmod -R 777 "$SERHOME/$1"
 echo "Restarting Apache2"
 service apache2 restart
 echo "Finished!"
-echo "Local address: http://$1/"
+echo "Local address: http://$host/"
