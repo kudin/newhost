@@ -16,12 +16,12 @@ cat <<EOF >> "$host.conf"
 	ServerAdmin webmaster@localhost 
 <Directory /var/www/>
         Options Indexes FollowSymLinks
-        AllowOverride None
+        AllowOverride All
         Require all granted
 </Directory>
 <Directory $SERHOME/$host>
         Options Indexes FollowSymLinks
-        AllowOverride None
+        AllowOverride All
         Require all granted
 </Directory>
 </VirtualHost>
